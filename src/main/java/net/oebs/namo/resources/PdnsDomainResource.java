@@ -1,35 +1,33 @@
 package net.oebs.namo.resources;
 
-import net.oebs.namo.core.Realm;
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.base.Optional;
 
-import javax.ws.rs.POST;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
-import org.hibernate.Query;
+import net.oebs.namo.core.PdnsDomain;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-@Path("/realm")
+@Path("/domain")
 @Produces(MediaType.APPLICATION_JSON)
-public class RealmResource {
+public class PdnsDomainResource {
 
     SessionFactory sessionFactory;
     
-    public RealmResource(SessionFactory sessionFactory) {
+    public PdnsDomainResource(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
-    @POST
+    @GET
     @Timed
-    public Realm createRealm() {
+    public PdnsDomain getPdnsDomain(@QueryParam("domain_id") Optional<String> domainId) {
         Session session = this.sessionFactory.openSession();
-        Query q = session.createSQLQuery(
-            "INSERT INTO namo.realm VALUES (default) RETURNING realm_id");
-        String realmId = (String)q.list().get(0);
+        PdnsDomain x = (PdnsDomain)session.get(PdnsDomain.class, 1);
         session.close();
-        return new Realm(realmId);
+        return x;
     }
 }

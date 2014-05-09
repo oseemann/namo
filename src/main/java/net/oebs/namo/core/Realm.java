@@ -1,23 +1,26 @@
 package net.oebs.namo.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.validator.constraints.Length;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "realm", catalog = "namo")
 public class Realm {
     
-    @Length(max = 3)
-    private String id;
+    private String realmId;
 
     public Realm() {
-        // Jackson deserialization
     }
 
     public Realm(String realmId) {
-        this.id = realmId;
+        this.realmId = realmId;
     }
 
+    @Id
     @JsonProperty
     public String getRealmId() {
-        return id;
+        return realmId;
     }
 }

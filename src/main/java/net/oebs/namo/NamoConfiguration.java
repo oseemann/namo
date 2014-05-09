@@ -5,29 +5,56 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class NamoConfiguration extends Configuration {
-    @NotEmpty
-    private String template;
 
     @NotEmpty
-    private String defaultName = "Stranger";
+    private String dbPass;
 
+    @NotEmpty
+    private String dbHost;
+
+    @NotEmpty
+    private String dbName;
+
+    @NotEmpty
+    private String dbUser;
+    
     @JsonProperty
-    public String getTemplate() {
-        return template;
+    public String getDbName() {
+        return this.dbName;
     }
 
     @JsonProperty
-    public void setTemplate(String template) {
-        this.template = template;
+    public void setDbName(String name) {
+        this.dbName = name;
+    }
+    
+    @JsonProperty
+    public String getDbHost() {
+        return this.dbHost;
     }
 
     @JsonProperty
-    public String getDefaultName() {
-        return defaultName;
+    public void setDbHost(String host) {
+        this.dbHost = host;
+    }
+    
+        @JsonProperty
+    public String getDbUser() {
+        return this.dbUser;
     }
 
     @JsonProperty
-    public void setDefaultName(String name) {
-        this.defaultName = name;
+    public void setDbUser(String user) {
+        this.dbUser = user;
+    }
+    
+    @JsonProperty
+    public String getDbPass() {
+        return this.dbPass;
+    }
+
+    @JsonProperty
+    public void setDbPass(String passwd) {
+        this.dbPass = passwd;
     }
 }
