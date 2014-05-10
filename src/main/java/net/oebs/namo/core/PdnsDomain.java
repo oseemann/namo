@@ -1,6 +1,7 @@
 package net.oebs.namo.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Table;
 import javax.persistence.Entity;
@@ -8,7 +9,7 @@ import javax.persistence.Id;
 
 @Entity
 @Table(name = "domains", catalog = "public")
-public class PdnsDomain {
+public class PdnsDomain implements Serializable {
 
     private Integer id;
     private String name;

@@ -11,5 +11,6 @@
         <property name="show_sql">true</property>
        
         <mapping class="net.oebs.namo.core.PdnsDomain"/>
+        <mapping class="net.oebs.namo.core.RealmCreation"/>
     </session-factory>
 </hibernate-configuration>

@@ -8,7 +8,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "realm", catalog = "namo")
 public class Realm {
-    
+
     private String realmId;
 
     public Realm() {
