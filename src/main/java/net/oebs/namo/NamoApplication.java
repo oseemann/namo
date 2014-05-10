@@ -23,26 +23,27 @@ public class NamoApplication extends Application<NamoConfiguration> {
     @Override
     public void initialize(Bootstrap<NamoConfiguration> bootstrap) {
     }
-    
+
     private Configuration getHibernateConfiguration(NamoConfiguration config) {
         Configuration dbConfig = new Configuration();
-        String dbUrl = String.format("jdbc:postgresql://%s:5433/%s", config.getDbHost(), config.getDbName());
+        String dbUrl = String.format("jdbc:postgresql://%s:%s/%s",
+                config.getDbHost(), config.getDbPort(), config.getDbName());
         dbConfig.setProperty("hibernate.connection.url", dbUrl);
         dbConfig.setProperty("hibernate.connection.username", config.getDbUser());
         dbConfig.setProperty("hibernate.connection.password", config.getDbPass());
-        dbConfig.configure();  
+        dbConfig.configure();
         return dbConfig;
     }
 
     @Override
     public void run(NamoConfiguration configuration, Environment environment) {
-        
+
         Configuration dbConfig = getHibernateConfiguration(configuration);
         SessionFactory dbSessionFactory = dbConfig.buildSessionFactory();
-        
+
         final TemplateHealthCheck healthCheck
                 = new TemplateHealthCheck();
-    
+
         environment.jersey().register(new RealmResource(dbSessionFactory));
         environment.jersey().register(new PdnsDomainResource(dbSessionFactory));
         environment.healthChecks().register("template", healthCheck);

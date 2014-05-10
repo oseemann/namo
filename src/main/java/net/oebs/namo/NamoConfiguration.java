@@ -17,7 +17,10 @@ public class NamoConfiguration extends Configuration {
 
     @NotEmpty
     private String dbUser;
-    
+
+    @NotEmpty
+    private String dbPort = "5432";
+
     @JsonProperty
     public String getDbName() {
         return this.dbName;
@@ -27,7 +30,7 @@ public class NamoConfiguration extends Configuration {
     public void setDbName(String name) {
         this.dbName = name;
     }
-    
+
     @JsonProperty
     public String getDbHost() {
         return this.dbHost;
@@ -37,8 +40,18 @@ public class NamoConfiguration extends Configuration {
     public void setDbHost(String host) {
         this.dbHost = host;
     }
-    
-        @JsonProperty
+
+    @JsonProperty
+    public String getDbPort() {
+        return this.dbPort;
+    }
+
+    @JsonProperty
+    public void setDbPort(String port) {
+        this.dbPort = port;
+    }
+
+    @JsonProperty
     public String getDbUser() {
         return this.dbUser;
     }
@@ -47,7 +60,7 @@ public class NamoConfiguration extends Configuration {
     public void setDbUser(String user) {
         this.dbUser = user;
     }
-    
+
     @JsonProperty
     public String getDbPass() {
         return this.dbPass;
