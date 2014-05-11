@@ -3,11 +3,21 @@ package net.oebs.namo;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.auth.basic.BasicAuthProvider;
+import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.hibernate.HibernateBundle;
+import io.dropwizard.jersey.setup.JerseyEnvironment;
+import net.oebs.namo.core.Domain;
+import net.oebs.namo.core.DomainDAO;
+import net.oebs.namo.core.Realm;
+import net.oebs.namo.core.RealmDAO;
+import net.oebs.namo.core.Subdomain;
+import net.oebs.namo.core.SubdomainDAO;
 import net.oebs.namo.health.TemplateHealthCheck;
-import net.oebs.namo.resources.PdnsDomainResource;
+import net.oebs.namo.resources.DomainResource;
 import net.oebs.namo.resources.RealmResource;
+import net.oebs.namo.resources.SubdomainResource;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 
 public class NamoApplication extends Application<NamoConfiguration> {
 
@@ -17,35 +27,34 @@ public class NamoApplication extends Application<NamoConfiguration> {
 
     @Override
     public String getName() {
-        return "hello-world";
+        return "namo";
     }
 
     @Override
     public void initialize(Bootstrap<NamoConfiguration> bootstrap) {
+        bootstrap.addBundle(hibernate);
     }
 
-    private Configuration getHibernateConfiguration(NamoConfiguration config) {
-        Configuration dbConfig = new Configuration();
-        String dbUrl = String.format("jdbc:postgresql://%s:%s/%s",
-                config.getDbHost(), config.getDbPort(), config.getDbName());
-        dbConfig.setProperty("hibernate.connection.url", dbUrl);
-        dbConfig.setProperty("hibernate.connection.username", config.getDbUser());
-        dbConfig.setProperty("hibernate.connection.password", config.getDbPass());
-        dbConfig.configure();
-        return dbConfig;
-    }
+    private final HibernateBundle<NamoConfiguration> hibernate = new HibernateBundle<NamoConfiguration>(
+            Realm.class, Domain.class, Subdomain.class) {
+                @Override
+                public DataSourceFactory getDataSourceFactory(NamoConfiguration configuration) {
+                    return configuration.getDataSourceFactory();
+                }
+            };
 
     @Override
     public void run(NamoConfiguration configuration, Environment environment) {
+        final TemplateHealthCheck healthCheck = new TemplateHealthCheck();
 
-        Configuration dbConfig = getHibernateConfiguration(configuration);
-        SessionFactory dbSessionFactory = dbConfig.buildSessionFactory();
+        SessionFactory sf = hibernate.getSessionFactory();
+        JerseyEnvironment jersey = environment.jersey();
+        RealmDAO realmDAO = new RealmDAO(sf);
 
-        final TemplateHealthCheck healthCheck
-                = new TemplateHealthCheck();
-
-        environment.jersey().register(new RealmResource(dbSessionFactory));
-        environment.jersey().register(new PdnsDomainResource(dbSessionFactory));
+        jersey.register(new BasicAuthProvider<Realm>(new NamoAuthenticator(realmDAO), "namo"));
+        jersey.register(new RealmResource(realmDAO));
+        jersey.register(new DomainResource(new DomainDAO(sf)));
+        jersey.register(new SubdomainResource(new SubdomainDAO(sf)));
         environment.healthChecks().register("template", healthCheck);
     }
 }
