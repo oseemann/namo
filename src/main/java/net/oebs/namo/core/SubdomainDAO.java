@@ -1,7 +1,9 @@
 package net.oebs.namo.core;
 
+import net.oebs.namo.errors.SubdomainInvalidException;
 import io.dropwizard.hibernate.AbstractDAO;
-import javax.validation.ConstraintViolationException;
+import org.hibernate.exception.ConstraintViolationException;
+import net.oebs.namo.errors.SubdomainNotAvailableException;
 import org.hibernate.SessionFactory;
 
 public class SubdomainDAO extends AbstractDAO<Subdomain> {
@@ -19,11 +21,13 @@ public class SubdomainDAO extends AbstractDAO<Subdomain> {
             sub.setDomain(x[1]);
             sub.setName(x[0]);
         } catch (Exception e) {
+            throw new SubdomainInvalidException(subdomain);
         }
 
         try {
             sub = persist(sub);
         } catch (ConstraintViolationException e) {
+            throw new SubdomainNotAvailableException(subdomain);
         }
 
         return sub.getSubdomainId();
