@@ -9,6 +9,7 @@ import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import net.oebs.namo.core.Domain;
 import net.oebs.namo.core.DomainDAO;
+import net.oebs.namo.core.PdnsRecord;
 import net.oebs.namo.core.Realm;
 import net.oebs.namo.core.RealmDAO;
 import net.oebs.namo.core.Subdomain;
@@ -20,6 +21,8 @@ import net.oebs.namo.resources.SubdomainResource;
 import org.hibernate.SessionFactory;
 
 public class NamoApplication extends Application<NamoConfiguration> {
+
+    PowerDNSSyncThread powerDnsSync;
 
     public static void main(String[] args) throws Exception {
         new NamoApplication().run(args);
@@ -36,7 +39,7 @@ public class NamoApplication extends Application<NamoConfiguration> {
     }
 
     private final HibernateBundle<NamoConfiguration> hibernate = new HibernateBundle<NamoConfiguration>(
-            Realm.class, Domain.class, Subdomain.class) {
+            Realm.class, Domain.class, Subdomain.class, PdnsRecord.class) {
                 @Override
                 public DataSourceFactory getDataSourceFactory(NamoConfiguration configuration) {
                     return configuration.getDataSourceFactory();
@@ -51,10 +54,14 @@ public class NamoApplication extends Application<NamoConfiguration> {
         JerseyEnvironment jersey = environment.jersey();
         RealmDAO realmDAO = new RealmDAO(sf);
 
+        powerDnsSync = new PowerDNSSyncThread(sf);
+
         jersey.register(new BasicAuthProvider<Realm>(new NamoAuthenticator(realmDAO), "namo"));
         jersey.register(new RealmResource(realmDAO));
         jersey.register(new DomainResource(new DomainDAO(sf)));
-        jersey.register(new SubdomainResource(new SubdomainDAO(sf)));
+        jersey.register(new SubdomainResource(new SubdomainDAO(sf), powerDnsSync));
         environment.healthChecks().register("template", healthCheck);
+
+        powerDnsSync.start();
     }
 }

@@ -12,7 +12,7 @@ public class SubdomainDAO extends AbstractDAO<Subdomain> {
         super(factory);
     }
 
-    public Integer claim(Realm realm, String subdomain) {
+    public Subdomain claim(Realm realm, String subdomain) {
         Subdomain sub = new Subdomain();
         sub.setRealmId(realm.getRealmId());
 
@@ -30,6 +30,6 @@ public class SubdomainDAO extends AbstractDAO<Subdomain> {
             throw new SubdomainNotAvailableException(subdomain);
         }
 
-        return sub.getSubdomainId();
+        return sub;
     }
 }

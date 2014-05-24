@@ -11,6 +11,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import net.oebs.namo.BackendSyncInterface;
 import net.oebs.namo.core.Realm;
 import net.oebs.namo.core.Subdomain;
 import net.oebs.namo.core.SubdomainDAO;
@@ -25,9 +26,11 @@ public class SubdomainResource {
     static final Logger log = LoggerFactory.getLogger(SubdomainResource.class);
     SessionFactory sessionFactory;
     SubdomainDAO dao;
+    BackendSyncInterface backend;
 
-    public SubdomainResource(SubdomainDAO dao) {
+    public SubdomainResource(SubdomainDAO dao, BackendSyncInterface backend) {
         this.dao = dao;
+        this.backend = backend;
     }
 
     @GET
@@ -42,7 +45,8 @@ public class SubdomainResource {
     public Integer claimSubdomain(@Auth Realm realm, String x) {
         log.info("XX: {}", x);
         log.info("Realm: {}", realm.getRealmId());
-        Integer id = dao.claim(realm, x);
-        return id;
+        Subdomain sub = dao.claim(realm, x);
+        backend.wakeup(sub);
+        return sub.getSubdomainId();
     }
 }

@@ -16,7 +16,7 @@ public class PdnsDomain implements Serializable {
 
     public PdnsDomain() {
     }
-    
+
     public PdnsDomain(Integer id, String name) {
         this.id = id;
         this.name = name;
