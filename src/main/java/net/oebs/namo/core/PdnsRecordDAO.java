@@ -18,7 +18,7 @@ public class PdnsRecordDAO extends AbstractDAO<PdnsRecord> {
     public void create(Subdomain sub) {
         Session session = this.currentSession();
         Transaction trx = session.beginTransaction();
-        PdnsRecord record = new PdnsRecord(sub.getName(), "A", "1.2.3.4", 1);
+        PdnsRecord record = new PdnsRecord(sub.getFqdn(), "A", "1.2.3.4", 1);
         record = persist(record);
         trx.commit();
         log.info("new PdnsRecord: {}", record.getId());

@@ -67,7 +67,13 @@ public class PdnsRecord implements Serializable {
         this.content = content;
     }
 
+    @Column(name = "domain_id")
+    public Integer getDomainId() {
+        return this.domainId;
+    }
+
     public void setDomainId(Integer domainId) {
         this.domainId = domainId;
     }
+
 }

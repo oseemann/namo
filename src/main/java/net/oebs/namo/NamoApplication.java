@@ -9,6 +9,7 @@ import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import net.oebs.namo.core.Domain;
 import net.oebs.namo.core.DomainDAO;
+import net.oebs.namo.core.PdnsDomain;
 import net.oebs.namo.core.PdnsRecord;
 import net.oebs.namo.core.Realm;
 import net.oebs.namo.core.RealmDAO;
@@ -39,7 +40,7 @@ public class NamoApplication extends Application<NamoConfiguration> {
     }
 
     private final HibernateBundle<NamoConfiguration> hibernate = new HibernateBundle<NamoConfiguration>(
-            Realm.class, Domain.class, Subdomain.class, PdnsRecord.class) {
+            Realm.class, Domain.class, Subdomain.class, PdnsRecord.class, PdnsDomain.class) {
                 @Override
                 public DataSourceFactory getDataSourceFactory(NamoConfiguration configuration) {
                     return configuration.getDataSourceFactory();

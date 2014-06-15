@@ -28,6 +28,11 @@ public class Subdomain implements Serializable {
     }
 
     @JsonProperty
+    public String getFqdn() {
+        return this.getName() + "." + this.getDomain();
+    }
+
+    @JsonProperty
     public Integer getSubdomainId() {
         return subdomain_id;
     }
@@ -47,7 +52,7 @@ public class Subdomain implements Serializable {
 
     @JsonProperty
     public String getDomain() {
-        return this.name;
+        return this.domain;
     }
 
     public void setDomain(String domain) {

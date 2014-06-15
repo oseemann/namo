@@ -1,6 +1,5 @@
 package net.oebs.namo.core;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,8 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.Table;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 @Entity
 @NamedNativeQueries({
@@ -45,7 +44,6 @@ public class Realm implements Serializable {
     }
 
     @Id
-    @JsonProperty
     public String getRealmId() {
         return realmId;
     }
@@ -54,7 +52,6 @@ public class Realm implements Serializable {
         this.realmId = realmId;
     }
 
-    @JsonProperty
     public String getRealmSecret() {
         return realmSecret;
     }
@@ -71,4 +68,28 @@ public class Realm implements Serializable {
         this.validAuth = validAuth;
     }
 
+    public int hashCode() {
+        return new HashCodeBuilder(7, 101).
+                append(realmId).
+                append(realmSecret).
+                append(validAuth).
+                toHashCode();
+    }
+
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Realm)) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+
+        Realm rhs = (Realm) obj;
+        return new EqualsBuilder().
+                // if deriving: appendSuper(super.equals(obj)).
+                append(realmId, rhs.realmId).
+                append(realmSecret, rhs.realmSecret).
+                append(validAuth, rhs.validAuth).
+                isEquals();
+    }
 }

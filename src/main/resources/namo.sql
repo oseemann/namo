@@ -21,7 +21,8 @@ CREATE TABLE namo.subdomain (
     name TEXT NOT NULL,
     realm_id TEXT NOT NULL REFERENCES namo.realm (realm_id),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
-    last_update TIMESTAMP WITH TIME ZONE NOT NULL
+    last_update TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
+    UNIQUE(domain, name)
 );
 
 CREATE OR REPLACE FUNCTION namo.create_realm()
